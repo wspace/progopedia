@@ -108,6 +108,8 @@ screen.colorDepth:screen.pixelDepth))+";u"+escape(document.URL)+
     <dd>
       <ul>
          
+            <li><a href="/paradigm/esoteric/">Esoteric</a></li>
+         
             <li><a href="/paradigm/imperative/">Imperative</a></li>
          
             <li><a href="/paradigm/scalar/">Scalar</a></li>
@@ -171,14 +173,133 @@ screen.colorDepth:screen.pixelDepth))+";u"+escape(document.URL)+
     <div id="maintext">
       <p>Whitespace is a popular esoteric language, widely known for using only whitespace characters for source code.
 </p>
-<p>Whitespace was created in 2003 by Edwin Brady and Chris Morris. It&#8217;s specification is quite simple, and it has no practical value, so its only standard is the authors&#8217; description. It hasn&#8217;t spawned dialects, since it itself is perfect in its domain. It is not known whether it is Turing-complete (looks like it is, but nobody yet has taken the bother to prove it).
+<p>Whitespace was created in 2003 by Edwin Brady and Chris Morris. Its specification is quite simple, and it has no practical value, so its only standard is the authors&#8217; description. It hasn&#8217;t spawned dialects, since it itself is perfect in its domain. It is not known whether it is Turing-complete (looks like it is, but nobody yet has taken the bother to prove it).
 </p>
 <p>Whitespace was created it an attempt to fix the injustice done to whitespace characters. See, most modern languages ignore them, and it&#8217;s unjust to ignore something just because it&#8217;s invisible. So, a new language  would ignore all characters except for whitespace ones. Other characters can be used as comments, however, one has to be careful not to slip an extra space or linefeed between comments.  Any development in it is possible only in an editor which marks tabs and spaces visible, or alternatively in hex editor.
 </p>
 <p>Each command of the language consists of these three kinds of characters: space (ASCII 32), tab (ASCII 9) and line feed (ASCII 10). This way the commands can be rather lengthy, and they are quite numerous; they are systematized by using prefix (called Instruction Modification Parameter) which notes the type of the command: Stack Manipulation, Arithmetic, Heap Access, Flow Control, I/O.
 </p>
-<p>The only data type used in the language is integer numbers in their binary representation. A number starts with sign token (Space for positive and Tab for negative), than the binary notation follows (Space for 0 and Tab for 1), and finally the number ends with a new line.
+<p>The virtual machine of the language has a stack and a heap. Both of them can process arbitrary-width integers as their elements; the stack is used to perform all operations, and heap is used as a permanent store of data.
 </p>
+<p>The only data type used in the language is integer numbers in their binary representation. A number starts with sign token (Space for positive and Tab for negative), than the binary notation follows (Space for 0 and Tab for 1), and finally the number ends with a new line. 
+</p>
+<p>Labels are arbitrary lists of spaces and tabs, terminated with line feed. Labels are used in flow control commands, and thus should be unique within the program.
+</p>
+<p>The commands of the language are the following (grouped by type and followed with the type of parameter it takes, if any):
+</p>
+<p><strong>Stack Manipulation</strong>
+</p>
+<ul>
+ <li>
+     <code>Space-Space-Number</code> : push the number on the stack<br />
+
+ </li>
+
+ <li>
+     <code>Space-LF-Space</code> : duplicate the element on top of the stack<br />
+
+ </li>
+
+ <li>
+     <code>Space-LF-Tab</code> : swap two top elements of the stack<br />
+
+ </li>
+
+ <li>
+     <code>Space-LF-LF</code> : pop the top element of the stack and discard it<br />
+
+ </li>
+
+ <li>
+     <code>Space-Tab-Space-Number</code> : copy the N-th item of the stack (index given by the argument) onto the top of the stack<br />
+
+ </li>
+
+ <li>
+     <code>Space-Tab-LF-Number</code> : &#8220;slide&#8221; N items off the stack while keeping the top item<br />
+
+ </li>
+</ul>
+<p>Two last commands are actually an extension, available since Whitespace 0.3, introduced to ease the usage of recursive functions.
+</p>
+<p><strong>Arithmetic</strong>
+</p>
+<ul>
+ <li>
+     <code>Tab-Space-Space-Space</code> : addition
+ </li>
+
+ <li>
+     <code>Tab-Space-Space-Tab</code> : subtraction
+ </li>
+
+ <li>
+     <code>Tab-Space-Space-LF</code> : multiplication
+ </li>
+
+ <li>
+     <code>Tab-Space-Tab-Space</code> : division (integer)
+ </li>
+
+ <li>
+     <code>Tab-Space-Tab-Tab</code> : modulo remainder
+ </li>
+</ul>
+<p>The operation is applied to two topmost elements of the stack. Left operand of the operation is the deeper element of the stack (the one that was pushed first).
+</p>
+<p><strong>Heap Access</strong>
+</p>
+<ul>
+ <li>
+     <code>Tab-Tab-Space</code> : store the top element of the stack at the memory cell, the address of which is given in second-top element
+ </li>
+
+ <li>
+     <code>Tab-Tab-Tab</code> : retrieve the contents of memory cell, the address of which is given with top element of the stack, and push this contents on the stack
+ </li>
+</ul>
+<p><strong>Flow Control</strong>
+</p>
+<ul>
+ <li>
+     <code>LF-Space-Space-Label</code> : put a label here
+ </li>
+
+ <li>
+     <code>LF-Space-Tab-Label</code> : call a subroutine
+ </li>
+
+ <li>
+     <code>LF-Space-LF-Label</code> : jump to the label
+ </li>
+
+ <li>
+     <code>LF-Tab-Space-Label</code> : if the top of the stack is zero, jump to the label
+ </li>
+
+ <li>
+     <code>LF-Tab-Tab-Label</code> : if the top of the stack is negative, jump to the label
+ </li>
+
+ <li>
+     <code>LF-Tab-LF</code> : end subroutine and pass control back to the caller
+ </li>
+
+ <li>
+     <code>LF-LF-LF</code> : end of program
+ </li>
+</ul>
+<p><strong>I/O</strong>
+</p>
+<ul>
+ <li>
+     <code>Tab-LF-Space-Space/Tab</code> : output the top element of the stack as a character/number
+ </li>
+
+ <li>
+     <code>Tab-LF-Tab-Space/Tab</code> : read a character/number from input stream and put it to memory cell, the address of which is given in top element of the stack
+ </li>
+</ul>
     </div>
     
     
@@ -249,6 +370,132 @@ screen.colorDepth:screen.pixelDepth))+";u"+escape(document.URL)+
   <span class="o">\</span><span class="n">n</span>  <span class="p">{</span> 	 	 <span class="p">}</span>
 <span class="k">print</span>	
   
+
+
+<span class="n">end</span>
+</code></pre></div>
+                        
+
+	    
+
+         
+            <h3>Factorial:</h3>
+            <a href="/example/factorial/222/">Example</a> for versions
+            
+                <a href="/version/whitespacers-ruby/">Whitespacers (Ruby)</a>
+            
+
+            
+                <p>This example uses a slightly different method of commenting &#8212; each command is preceded with its literal description. Numbers and labels are enclosed in brackets.
+</p>
+<p>The example works as follows: heap is used to store variables (1 &#8212; index of the first factorial which doesn&#8217;t need to be calculated, 2..5 &#8212; ASCII-codes of special characters used in printing, 6 and 7 &#8212; current number and its factorial), and stack is used to run commands). Factorial is calculated iteratively, on each iteration previously calculated values are printed, and new ones are calculated and stored to memory. After this, the newly calculated number is compared with contents of cell 1: if it is less, the loop continues, otherwise it halts.
+</p>
+<p>A curious thing to note is that in Whitespace numeric system zero is &#8220;negative&#8221;: a number must have at least one Tab in its notation, and binary notation of zero has no 1s, so it has to be written as Tab (only sign bit).
+</p>
+                        
+
+            
+                <div class="highlight"><pre><code><span class="n">push_1</span>  <span class="p">{</span> 	<span class="p">}</span>
+<span class="n">push_17</span>  <span class="p">{</span> 	   	<span class="p">}</span>
+<span class="n">store</span>		 <span class="n">push_2</span>  <span class="p">{</span> 	 <span class="p">}</span>
+<span class="n">push_33</span>  <span class="p">{</span> 	    	<span class="p">}</span>
+<span class="n">store</span>		 <span class="n">push_3</span>  <span class="p">{</span> 		<span class="p">}</span>
+<span class="n">push_32</span>  <span class="p">{</span> 	     <span class="p">}</span>
+<span class="n">store</span>		 <span class="n">push_4</span>  <span class="p">{</span> 	  <span class="p">}</span>
+<span class="n">push_61</span>  <span class="p">{</span> 				 	<span class="p">}</span>
+<span class="n">store</span>		 <span class="n">push_5</span>  <span class="p">{</span> 	 	<span class="p">}</span>
+<span class="n">push_10</span>  <span class="p">{</span> 	 	 <span class="p">}</span>
+<span class="n">store</span>		 <span class="n">push_6</span>  <span class="p">{</span> 		 <span class="p">}</span>
+<span class="n">push_0</span>  <span class="p">{</span>	 <span class="p">}</span>
+<span class="n">store</span>		 <span class="n">push_7</span>  <span class="p">{</span> 			<span class="p">}</span>
+<span class="n">push_1</span>  <span class="p">{</span> 	<span class="p">}</span>
+<span class="n">store</span>		 <span class="n">label</span>
+  <span class="p">{</span> <span class="p">}</span>
+<span class="n">printing_block_push_6</span>  <span class="p">{</span> 		 <span class="p">}</span>
+<span class="n">retrieve</span>			<span class="n">print_as_number</span>	
+ 	<span class="n">push_2</span>  <span class="p">{</span> 	 <span class="p">}</span>
+<span class="n">retrieve</span>			<span class="n">print_as_char</span>	
+  <span class="n">push_3</span>  <span class="p">{</span> 		<span class="p">}</span>
+<span class="n">retrieve</span>			<span class="n">print_as_char</span>	
+  <span class="n">push_4</span>  <span class="p">{</span> 	  <span class="p">}</span>
+<span class="n">retrieve</span>			<span class="n">print_as_char</span>	
+  <span class="n">push_3</span>  <span class="p">{</span> 		<span class="p">}</span>
+<span class="n">retrieve</span>			<span class="n">print_as_char</span>	
+  <span class="n">push_7</span>  <span class="p">{</span> 			<span class="p">}</span>
+<span class="n">retrieve</span>			<span class="n">print_as_number</span>	
+ 	<span class="n">push_5</span>  <span class="p">{</span> 	 	<span class="p">}</span>
+<span class="n">retrieve</span>			<span class="n">print_as_char</span>	
+  <span class="n">increase_counter_block_push_6</span>  <span class="p">{</span> 		 <span class="p">}</span>
+<span class="n">push_6</span>  <span class="p">{</span> 		 <span class="p">}</span>
+<span class="n">retrieve</span>			<span class="n">push_1</span>  <span class="p">{</span> 	<span class="p">}</span>
+<span class="n">add</span>	   <span class="n">store</span>		 <span class="n">calculate_next_factorial_block_push_7</span>  <span class="p">{</span> 			<span class="p">}</span>
+<span class="n">push_7</span>  <span class="p">{</span> 			<span class="p">}</span>
+<span class="n">retrieve</span>			<span class="n">push_6</span>  <span class="p">{</span> 		 <span class="p">}</span>
+<span class="n">retrieve</span>			<span class="n">multiply</span>	  
+<span class="n">store</span>		 <span class="n">conditional_return_block_push_6</span>  <span class="p">{</span> 		 <span class="p">}</span>
+<span class="n">retrieve</span>			<span class="n">push_1</span>  <span class="p">{</span> 	<span class="p">}</span>
+<span class="n">retrieve</span>			<span class="n">subtract</span>	  	<span class="n">jump_if_negative</span>
+		<span class="p">{</span> <span class="p">}</span>
+<span class="n">quit</span>
+
+
+<span class="n">end</span>
+</code></pre></div>
+                        
+
+	    
+
+         
+            <h3>Fibonacci numbers:</h3>
+            <a href="/example/fibonacci/223/">Example</a> for versions
+            
+                <a href="/version/whitespacers-ruby/">Whitespacers (Ruby)</a>
+            
+
+            
+                <p>This example is similar to <a href="http://progopedia.com/example/factorial/222/">factorial one</a>, except for that it makes more use of stack data storage and duplicate command to avoid extra readings from memory cells. Also, in this case the counter is negative and increased at each iteration, as opposed to positive and compared to fixed number of iterations.
+</p>
+                        
+
+            
+                <div class="highlight"><pre><code><span class="n">push_1</span>  <span class="p">{</span> 	<span class="p">}</span>
+<span class="n">push_</span><span class="o">-</span><span class="mi">16</span>  <span class="p">{</span>		    <span class="p">}</span>
+<span class="n">store</span>		 <span class="n">push_2</span>  <span class="p">{</span> 	 <span class="p">}</span>
+<span class="n">push_44</span>  <span class="p">{</span> 	 		  <span class="p">}</span>
+<span class="n">store</span>		 <span class="n">push_3</span>  <span class="p">{</span> 		<span class="p">}</span>
+<span class="n">push_32</span>  <span class="p">{</span> 	     <span class="p">}</span>
+<span class="n">store</span>		 <span class="n">push_4</span>  <span class="p">{</span> 	  <span class="p">}</span>
+<span class="n">push_0</span>  <span class="p">{</span>	 <span class="p">}</span>
+<span class="n">store</span>		 <span class="n">push_5</span>  <span class="p">{</span> 	 	<span class="p">}</span>
+<span class="n">push_1</span>  <span class="p">{</span> 	<span class="p">}</span>
+<span class="n">store</span>		 <span class="n">label</span>
+  <span class="p">{</span> <span class="p">}</span>
+<span class="n">start_loop_push_5</span>  <span class="p">{</span> 	 	<span class="p">}</span>
+<span class="n">push_4</span>  <span class="p">{</span> 	  <span class="p">}</span>
+<span class="n">retrieve</span>			<span class="n">push_4</span>  <span class="p">{</span> 	  <span class="p">}</span>
+<span class="n">duplicate</span> 
+ <span class="n">push_5</span>  <span class="p">{</span> 	 	<span class="p">}</span>
+<span class="n">retrieve</span>			<span class="n">duplicate</span> 
+ <span class="n">print_as_number</span>	
+ 	<span class="n">push_2</span>  <span class="p">{</span> 	 <span class="p">}</span>
+<span class="n">retrieve</span>			<span class="n">print_as_char</span>	
+  <span class="n">push_3</span>  <span class="p">{</span> 		<span class="p">}</span>
+<span class="n">retrieve</span>			<span class="n">print_as_char</span>	
+  <span class="n">store</span>		 <span class="n">retrieve</span>			<span class="n">add</span>	   <span class="n">store</span>		 <span class="n">push_1</span>  <span class="p">{</span> 	<span class="p">}</span>
+<span class="n">duplicate</span> 
+ <span class="n">duplicate</span> 
+ <span class="n">duplicate</span> 
+ <span class="n">retrieve</span>			<span class="n">add</span>	   <span class="n">store</span>		 <span class="n">retrieve</span>			<span class="n">jump_if_negative</span>
+		<span class="p">{</span> <span class="p">}</span>
+<span class="n">push_10</span>  <span class="p">{</span> 	 	 <span class="p">}</span>
+<span class="n">push_46</span>  <span class="p">{</span> 	 			 <span class="p">}</span>
+<span class="n">duplicate</span> 
+ <span class="n">duplicate</span> 
+ <span class="n">print_as_char</span>	
+  <span class="n">print_as_char</span>	
+  <span class="n">print_as_char</span>	
+  <span class="n">print_as_char</span>	
+  <span class="n">quit</span>
 
 
 <span class="n">end</span>
@@ -330,9 +577,9 @@ screen.colorDepth:screen.pixelDepth))+";u"+escape(document.URL)+
      
         <li><a href="/users/DerekParnell/">DerekParnell</a></li>
      
-        <li><a href="/users/a_m0d/">a_m0d</a></li>
+        <li><a href="/users/Fpstefan/">Fpstefan</a></li>
      
-        <li><a href="/users/gulik/">gulik</a></li>
+        <li><a href="/users/a_m0d/">a_m0d</a></li>
      
         <li><a href="/users/porges/">porges</a></li>
      
